@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Daily Rhythm Pro">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIllvdXIgRGFpbHkgUmh5dGhtIFBybyIsCiAgInNob3J0X25hbWUiOiAiUmh5dGhtIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiM2NjdlZWEiLAogICJ0aGVtZV9jb2xvciI6ICIjNjY3ZWVhIiwKICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLAogICJpY29ucyI6IFtdCn0=">
+    <title>Your Daily Rhythm Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .current-block {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .current-block.active {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            }
+            50% {
+                box-shadow: 0 8px 40px rgba(79, 172, 254, 0.4), 0 0 30px rgba(79, 172, 254, 0.3);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .current-block .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+
+        .current-block .activity {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .current-block .time {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .next-block {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .next-block .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+            margin-bottom: 5px;
+        }
+
+        .next-block .activity {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .schedule-list {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .schedule-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            margin: 0 -10px;
+            padding: 12px 10px;
+            border-radius: 10px;
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-item.active {
+            background: rgba(79, 172, 254, 0.2);
+            margin: 0 -10px;
+            padding: 12px 10px;
+            border-radius: 10px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                background: rgba(79, 172, 254, 0.2);
+            }
+            50% {
+                background: rgba(79, 172, 254, 0.3);
+            }
+        }
+
+        .schedule-status {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Status: Not Started */
+        .schedule-status.not-started {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Status: In Progress */
+        .schedule-status.in-progress {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: 2px solid #4facfe;
+            animation: pulse-status 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-status {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(79, 172, 254, 0.7);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 10px 5px rgba(79, 172, 254, 0);
+            }
+        }
+
+        /* Status: Completed On Time */
+        .schedule-status.completed {
+            background: #27AE60;
+            border: 2px solid #27AE60;
+        }
+
+        /* Status: Completed Late */
+        .schedule-status.completed-late {
+            background: #F39C12;
+            border: 2px solid #F39C12;
+        }
+
+        /* Status: Missed */
+        .schedule-status.missed {
+            background: #E74C3C;
+            border: 2px solid #E74C3C;
+        }
+
+        .schedule-time {
+            font-size: 13px;
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .schedule-activity {
+            flex: 1;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .schedule-item.faded .schedule-activity,
+        .schedule-item.faded .schedule-time {
+            opacity: 0.5;
+        }
+
+        .weekend-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .weekend-message .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .weekend-message h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .weekend-message p {
+            opacity: 0.8;
+        }
+
+        .action-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 15px 20px;
+            display: none;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .action-menu.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .action-menu .menu-title {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-start {
+            background: #4facfe;
+            color: white;
+        }
+
+        .btn-complete {
+            background: #27AE60;
+            color: white;
+        }
+
+        .btn-late {
+            background: #F39C12;
+            color: white;
+        }
+
+        .btn-miss {
+            background: #E74C3C;
+            color: white;
+        }
+
+        .btn-reset {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+            z-index: 999;
+        }
+
+        .refresh-btn:active {
+            transform: rotate(180deg);
+        }
+
+        .analytics-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .analytics-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 2000;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            max-width: 90%;
+        }
+
+        .toast.success {
+            background: rgba(39, 174, 96, 0.95);
+            color: white;
+        }
+
+        .toast.warning {
+            background: rgba(243, 156, 18, 0.95);
+            color: white;
+        }
+
+        .toast.error {
+            background: rgba(231, 76, 60, 0.95);
+            color: white;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes slideUpOut {
+            from {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear;
+            z-index: 3000;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 5000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .analytics-section {
+            margin-bottom: 20px;
+        }
+
+        .analytics-section h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .legend {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- Content will be inserted by JavaScript -->
+    </div>
+
+    <button class="refresh-btn" onclick="updateDisplay()" title="Refresh">↻</button>
+    <button class="analytics-btn" onclick="showAnalytics()" title="Analytics">📊</button>
+
+    <div class="action-menu" id="actionMenu">
+        <div class="menu-title">Update Activity Status</div>
+        <div class="action-buttons">
+            <button class="action-btn btn-start" onclick="setStatus('in-progress')">
+                🔵 Start
+            </button>
+            <button class="action-btn btn-complete" onclick="setStatus('completed')">
+                ✅ Complete
+            </button>
+            <button class="action-btn btn-late" onclick="setStatus('completed-late')">
+                ⏰ Late
+            </button>
+            <button class="action-btn btn-miss" onclick="setStatus('missed')">
+                ❌ Missed
+            </button>
+            <button class="action-btn btn-reset" onclick="setStatus('not-started')">
+                ↻ Reset
+            </button>
+        </div>
+    </div>
+
+    <div class="modal" id="analyticsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Your Analytics</h2>
+                <button class="modal-close" onclick="closeAnalytics()">×</button>
+            </div>
+            <div id="analyticsContent">
+                <!-- Analytics will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCHEDULE = [
+            {start: "06:15", end: "07:00", activity: "Morning Prayer", category: "Spiritual"},
+            {start: "07:00", end: "07:30", activity: "Bible Reading (Deep Study)", category: "Spiritual Dev"},
+            {start: "07:30", end: "08:15", activity: "Get Ready & Commute", category: "Transition"},
+            {start: "08:15", end: "09:45", activity: "CFA Deep Study (Hardest Concepts)", category: "Focus Session 1"},
+            {start: "09:45", end: "10:00", activity: "Quick Reset (Stretch/Water/Prep)", category: "Buffer"},
+            {start: "10:00", end: "13:00", activity: "Work Session 1", category: "Career"},
+            {start: "13:00", end: "13:30", activity: "Lunch (Mindful Eating)", category: "Recovery"},
+            {start: "13:30", end: "14:00", activity: "Power Nap (20-25 min)", category: "Recovery"},
+            {start: "14:00", end: "17:00", activity: "Work Session 2", category: "Career"},
+            {start: "17:00", end: "18:00", activity: "AI Mastery + Light Movement", category: "Tech Dev"},
+            {start: "18:00", end: "19:00", activity: "Dinner & Unwind", category: "Break"},
+            {start: "19:00", end: "20:30", activity: "CFA Practice Problems (Application)", category: "Professional Dev"},
+            {start: "20:30", end: "21:30", activity: "Strategic Reading (Business/Personal)", category: "Growth"},
+            {start: "21:30", end: "21:45", activity: "Pack up & Drive to Estate", category: "Transition"},
+            {start: "21:45", end: "22:30", activity: "Prayer Walk (Gate to House)", category: "Spiritual Reflection"},
+            {start: "22:30", end: "22:45", activity: "Freshen up", category: "Wind-down"},
+        ];
+
+        let selectedBlockIndex = null;
+
+        // LocalStorage functions
+        function getTodayKey() {
+            const today = new Date();
+            return `schedule_pro_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}`;
+        }
+
+        function getBlockStatuses() {
+            const key = getTodayKey();
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : {};
+        }
+
+        function saveBlockStatuses(statuses) {
+            const key = getTodayKey();
+            localStorage.setItem(key, JSON.stringify(statuses));
+        }
+
+        function parseTime(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        function getCurrentBlock() {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const dayOfWeek = now.getDay();
+
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                return { isWeekend: true };
+            }
+
+            if (currentMinutes >= parseTime("22:45") || currentMinutes < parseTime("06:15")) {
+                return { isSleep: true };
+            }
+
+            for (let i = 0; i < SCHEDULE.length; i++) {
+                const block = SCHEDULE[i];
+                const startMinutes = parseTime(block.start);
+                const endMinutes = parseTime(block.end);
+
+                if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
+                    const totalMinutes = endMinutes - startMinutes;
+                    const elapsedMinutes = currentMinutes - startMinutes;
+                    const progress = (elapsedMinutes / totalMinutes) * 100;
+                    const remaining = totalMinutes - elapsedMinutes;
+
+                    return {
+                        current: block,
+                        index: i,
+                        progress: Math.min(100, Math.max(0, progress)),
+                        remaining: remaining,
+                        next: i < SCHEDULE.length - 1 ? SCHEDULE[i + 1] : null
+                    };
+                }
+            }
+
+            return { isTransition: true };
+        }
+
+        function getBlockStatus(index) {
+            const statuses = getBlockStatuses();
+            const statusKey = `block_${index}`;
+            
+            if (statuses[statusKey]) {
+                return statuses[statusKey];
+            }
+
+            // Auto-detect based on time
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const block = SCHEDULE[index];
+            const startMinutes = parseTime(block.start);
+            const endMinutes = parseTime(block.end);
+
+            if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
+                return 'in-progress';
+            } else if (currentMinutes >= endMinutes) {
+                return 'not-started'; // Pending user action
+            }
+
+            return 'not-started';
+        }
+
+        function setBlockStatus(index, status) {
+            const statuses = getBlockStatuses();
+            const statusKey = `block_${index}`;
+            statuses[statusKey] = status;
+            saveBlockStatuses(statuses);
+        }
+
+        function openActionMenu(index) {
+            selectedBlockIndex = index;
+            const menu = document.getElementById('actionMenu');
+            menu.classList.add('show');
+        }
+
+        function closeActionMenu() {
+            const menu = document.getElementById('actionMenu');
+            menu.classList.remove('show');
+            selectedBlockIndex = null;
+        }
+
+        function setStatus(status) {
+            if (selectedBlockIndex === null) return;
+
+            setBlockStatus(selectedBlockIndex, status);
+            closeActionMenu();
+            updateDisplay();
+
+            const block = SCHEDULE[selectedBlockIndex];
+            const messages = {
+                'in-progress': `🔵 Started: ${block.activity}`,
+                'completed': `✅ Completed on time: ${block.activity} - Excellent! 🎉`,
+                'completed-late': `⏰ Completed late: ${block.activity} - Better late than never!`,
+                'missed': `❌ Marked as missed: ${block.activity}`,
+                'not-started': `↻ Reset: ${block.activity}`
+            };
+
+            const types = {
+                'completed': 'success',
+                'completed-late': 'warning',
+                'missed': 'error',
+                'in-progress': 'success',
+                'not-started': 'success'
+            };
+
+            showToast(messages[status], types[status]);
+
+            // Check for 100% completion
+            checkPerfectDay();
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideUpOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function checkPerfectDay() {
+            const statuses = getBlockStatuses();
+            const totalBlocks = SCHEDULE.filter(b => b.category !== "Transition").length;
+            const completedCount = Object.values(statuses).filter(s => s === 'completed' || s === 'completed-late').length;
+
+            if (completedCount === totalBlocks) {
+                triggerConfetti();
+                showToast('🎉 PERFECT DAY! All blocks completed! You\'re unstoppable! 💪', 'success');
+            }
+        }
+
+        function triggerConfetti() {
+            const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function calculateStats() {
+            const statuses = getBlockStatuses();
+            const totalBlocks = SCHEDULE.filter(b => b.category !== "Transition").length;
+            
+            let completed = 0;
+            let late = 0;
+            let missed = 0;
+            let inProgress = 0;
+
+            Object.values(statuses).forEach(status => {
+                if (status === 'completed') completed++;
+                else if (status === 'completed-late') late++;
+                else if (status === 'missed') missed++;
+                else if (status === 'in-progress') inProgress++;
+            });
+
+            const completionRate = totalBlocks > 0 ? Math.round((completed / totalBlocks) * 100) : 0;
+            const onTimeRate = (completed + late) > 0 ? Math.round((completed / (completed + late)) * 100) : 0;
+            const lateRate = totalBlocks > 0 ? Math.round((late / totalBlocks) * 100) : 0;
+            const missedRate = totalBlocks > 0 ? Math.round((missed / totalBlocks) * 100) : 0;
+
+            return {
+                total: totalBlocks,
+                completed,
+                late,
+                missed,
+                inProgress,
+                completionRate,
+                onTimeRate,
+                lateRate,
+                missedRate
+            };
+        }
+
+        function showAnalytics() {
+            const modal = document.getElementById('analyticsModal');
+            const content = document.getElementById('analyticsContent');
+            const stats = calculateStats();
+
+            content.innerHTML = `
+                <div class="analytics-section">
+                    <h3>Today's Performance</h3>
+                    <div class="analytics-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">${stats.completionRate}%</div>
+                            <div class="stat-label">Completion Rate</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${stats.onTimeRate}%</div>
+                            <div class="stat-label">On-Time Rate</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${stats.lateRate}%</div>
+                            <div class="stat-label">Late Rate</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${stats.missedRate}%</div>
+                            <div class="stat-label">Missed Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-section">
+                    <h3>Block Breakdown</h3>
+                    <div class="legend">
+                        <div class="legend-color" style="background: #27AE60;"></div>
+                        <span>On Time: ${stats.completed}</span>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-color" style="background: #F39C12;"></div>
+                        <span>Late: ${stats.late}</span>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-color" style="background: #E74C3C;"></div>
+                        <span>Missed: ${stats.missed}</span>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                        <span>In Progress: ${stats.inProgress}</span>
+                    </div>
+                </div>
+
+                <div class="analytics-section">
+                    <h3>Quick Tips</h3>
+                    <p style="font-size: 13px; opacity: 0.8; line-height: 1.6;">
+                        ${stats.completionRate >= 80 ? '🔥 You\'re crushing it! Keep this momentum!' : 
+                          stats.completionRate >= 50 ? '💪 Good progress! Focus on reducing late completions.' :
+                          '⚡ Let\'s turn this around! Start marking blocks as you complete them.'}
+                    </p>
+                </div>
+            `;
+
+            modal.classList.add('show');
+        }
+
+        function closeAnalytics() {
+            const modal = document.getElementById('analyticsModal');
+            modal.classList.remove('show');
+        }
+
+        function updateDisplay() {
+            const app = document.getElementById('app');
+            const state = getCurrentBlock();
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            const stats = calculateStats();
+
+            if (state.isWeekend) {
+                app.innerHTML = `
+                    <div class="header">
+                        <h1>🎯 Your Daily Rhythm Pro</h1>
+                        <div class="date">${dateStr}</div>
+                    </div>
+                    <div class="weekend-message">
+                        <div class="icon">🏡</div>
+                        <h2>Weekend - Family Time</h2>
+                        <p>Enjoy your time at home. The schedule resumes Monday.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (state.isSleep) {
+                app.innerHTML = `
+                    <div class="header">
+                        <h1>🎯 Your Daily Rhythm Pro</h1>
+                        <div class="date">${dateStr}</div>
+                    </div>
+                    <div class="weekend-message">
+                        <div class="icon">😴</div>
+                        <h2>Sleep Time</h2>
+                        <p>Get your 7.5 hours of recovery. See you at 6:15am!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="header">
+                    <h1>🎯 Your Daily Rhythm Pro</h1>
+                    <div class="date">${dateStr}</div>
+                </div>
+            `;
+
+            if (state.current) {
+                const currentStatus = getBlockStatus(state.index);
+                html += `
+                    <div class="current-block ${currentStatus === 'in-progress' ? 'active' : ''}">
+                        <div class="label">NOW</div>
+                        <div class="activity">${state.current.activity}</div>
+                        <div class="time">⏰ ${state.current.start} - ${state.current.end} • ${state.current.category}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${state.progress}%"></div>
+                        </div>
+                        <div class="progress-text">${Math.round(state.progress)}% complete • ${state.remaining} min remaining</div>
+                    </div>
+                `;
+
+                if (state.next) {
+                    html += `
+                        <div class="next-block">
+                            <div class="label">NEXT UP</div>
+                            <div class="activity">🔜 ${state.next.activity} at ${state.next.start}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Stats
+            html += `
+                <div class="stats">
+                    <div class="label">TODAY'S STATS</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">${stats.completed + stats.late}/${stats.total}</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${stats.completionRate}%</div>
+                            <div class="stat-label">Completion</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${stats.onTimeRate}%</div>
+                            <div class="stat-label">On Time</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${stats.missed}</div>
+                            <div class="stat-label">Missed</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Schedule list
+            html += `<div class="schedule-list"><div class="label" style="margin-bottom: 15px;">FULL SCHEDULE</div>`;
+
+            SCHEDULE.forEach((block, i) => {
+                const isActive = state.current && state.index === i;
+                const status = getBlockStatus(i);
+                const activeClass = isActive ? 'active' : '';
+                const fadedClass = (status === 'completed' || status === 'completed-late' || status === 'missed') ? 'faded' : '';
+
+                let icon = '';
+                if (status === 'completed') icon = '✓';
+                else if (status === 'completed-late') icon = '⏰';
+                else if (status === 'missed') icon = '✕';
+                else if (status === 'in-progress') icon = '▶';
+
+                html += `
+                    <div class="schedule-item ${activeClass} ${fadedClass}" onclick="openActionMenu(${i})">
+                        <div class="schedule-status ${status}">${icon}</div>
+                        <div class="schedule-time">${block.start}</div>
+                        <div class="schedule-activity">${block.activity}</div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            app.innerHTML = html;
+        }
+
+        // Close action menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('actionMenu');
+            if (menu.classList.contains('show') && !menu.contains(e.target) && !e.target.closest('.schedule-item')) {
+                closeActionMenu();
+            }
+        });
+
+        // Close analytics modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('analyticsModal');
+            if (modal.classList.contains('show') && e.target === modal) {
+                closeAnalytics();
+            }
+        });
+
+        // Update display
+        updateDisplay();
+        setInterval(updateDisplay, 30000);
+    </script>
+</body>
+</html>
